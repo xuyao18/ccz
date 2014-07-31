@@ -2,6 +2,8 @@ local game = class('game', function()
 	return display.newScene("game")
 end)
 
+require("app.controller.god")
+
 function game:ctor()
 	items = {}
 	table.insert(items, {name="start", cb=self.start})
@@ -37,6 +39,8 @@ end
 
 function game:start( ... )
 	print("start ")
+	God.game_start()
+	
 end
 
 function  game:exit()
