@@ -12,7 +12,6 @@ end
 function game:startup()
 	CCFileUtils:sharedFileUtils():addSearchPath("res/")
 	game.enterMenuScene()
-
 end
 
 function game:ententerMenuScene()
@@ -30,6 +29,7 @@ function game:createMenuScene(items)
 	end
 	menu = ui.newMenu(labels)
 	menu:alignItemsVertically()
+
 	menu:setPosition(display.cx, display.cy)
 	--self:addChild(menu)
 	return menu
