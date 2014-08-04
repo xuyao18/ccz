@@ -1,22 +1,23 @@
 local StoryScene = class('StoryScene', function()
 	return display.newScene("StoryScene")
 end)
+require("app.script.story")
 
-
-function StoryScene:readScript( idx )
-	cotent = io.readfile("script"..idx.."")
-
+function StoryScene:ctor()
+	self.script = nil
+	self.content = nil
 end
 
-function StoryScene:analyseScript(content)
-
+function StoryScene:analyseScript(idx)
+	self.content = io.readfile("script"..idx.."")
+	self.analyse(self.content)
 end
 
 function StoryScene:next()
 	
 end
 
-function StoryScene:end()
+function StoryScene:finish()
 	
 end
 
