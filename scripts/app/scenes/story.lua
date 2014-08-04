@@ -1,7 +1,7 @@
 local StoryScene = class('StoryScene', function()
 	return display.newScene("StoryScene")
 end)
-require("app.script.story")
+scpt = require("app.script.story")
 
 function StoryScene:ctor()
 	self.script = nil
@@ -10,7 +10,7 @@ end
 
 function StoryScene:analyseScript(idx)
 	self.content = io.readfile("script"..idx.."")
-	self.analyse(self.content)
+	self.script = scpt = analyse(self.content)
 end
 
 function StoryScene:next()
