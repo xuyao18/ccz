@@ -40,4 +40,5 @@ local storyparser = slaxml:parser{
 function StoryScript:analyse()
 	xml = require("app.utils.xml_utils")
 	tabs = xml.parse(self.content, self.storyparser)
+	return tabs
 end

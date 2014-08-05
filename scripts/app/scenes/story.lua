@@ -10,7 +10,8 @@ end
 
 function StoryScene:analyseScript(idx)
 	self.content = io.readfile("script"..idx.."")
-	self.script = scpt = analyse(self.content)
+	self.script = scpt.analyse(self.content)
+	
 end
 
 function StoryScene:next()
