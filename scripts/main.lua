@@ -5,5 +5,5 @@ function __G__TRACKBACK__(errorMessage)
     print(debug.traceback("", 2))
     print("----------------------------------------")
 end
-
+require("app.utils.SLAXML.slaxml")
 require("app.MyApp").new():run()
