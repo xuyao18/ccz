@@ -1,19 +1,25 @@
 local StoryScene = class('StoryScene', function()
 	return display.newScene("StoryScene")
 end)
-scpt = require("app.script.story")
-
+scpt = require("app.script.storyscript")
+stlay = require("app.layer.storylayer")
 
 function StoryScene:ctor()
 	self.script = nil
 	self.content = nil
-	self.layer = require("app.layer.storylayer").new()
+	self.layer = stlay.new()
 	self.idx = 0
+	self:analyseScript("res/plot/R_plot0.xml")
 end
 
-function StoryScene:analyseScript(idx)
-	self.content = io.readfile("script"..idx.."")
+function StoryScene:analyseScript(path)
+	self.content = io.readfile(path)
+	--print(self.content)
+	scpt.content = self.content
+	print("story content -> "..self.content)
 	self.script = scpt.analyse(self.content)
+	self.layer.setQueue(self.script)
+	self.layer.setGUI()
 end
 
 function StoryScene:next()

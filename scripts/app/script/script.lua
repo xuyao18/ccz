@@ -2,7 +2,7 @@ Script = class()
 
 function Script:ctor()
 	self.queue = {}
-	self.idx = 0
+	self.idx = -1 
 	self.content = nil 
 end
 
@@ -15,7 +15,8 @@ function Script:getQueue()
 end
 
 function Script:getNext()
-	return self.queue[idx],self.idx++
+	self.idx = self.idx + 1 
+	return self.queue[idx]
 end
 
 function Script:analyse()

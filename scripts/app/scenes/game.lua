@@ -13,6 +13,7 @@ end
 
 function game:startup()
 	CCFileUtils:sharedFileUtils():addSearchPath("res/")
+
 	game.enterMenuScene()
 end
 
@@ -38,7 +39,6 @@ function game:createMenuScene(items)
 end
 
 function game:start( ... )
-	print("start ")
 	God.game_start()
 	
 end

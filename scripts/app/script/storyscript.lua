@@ -1,5 +1,5 @@
-require("script")
-slaxml = require("app.utils.SLAXML")
+require("app.script.script")
+slaxml = require("app.utils.SLAXML.slaxml")
 StoryScript = class(Script)
 
 local starter = nil
@@ -7,7 +7,8 @@ local text = nil
 local attr = nil
 local queue = nil 
 local scrits = nil
-local storyparser = slaxml:parser{
+
+local storyparser = slaxml.parser{
 	startElement = function(name,nsURI,nsPrefix)       
 		starter = name
 	end, -- When "<foo" or <x:foo is seen
@@ -23,7 +24,7 @@ local storyparser = slaxml:parser{
     	if scrits == nil then 
     		scrits = {}
     	end
-    	table.insert(scrits, {starter, attr)
+    	table.insert(scrits, {starter, attr})
     end, -- When "</foo>" or </x:foo> or "/>" is seen
 
     text         = function(text)                      
@@ -37,8 +38,11 @@ local storyparser = slaxml:parser{
     pi           = function(target,content)            end, -- processing instructions e.g. "<?yes mon?>"
 }
 
-function StoryScript:analyse()
-	xml = require("app.utils.xml_utils")
-	tabs = xml.parse(self.content, self.storyparser)
+function StoryScript:analyse(content)
+	require("app.utils.xml_utils")
+    print("analyse content -->"..content)
+	tabs = parse(content, storyparser)
 	return tabs
 end
+
+return StoryScript

@@ -3,9 +3,18 @@ local StoryLayer = class("StoryLayer", function()
 end)
 
 function StoryLayer:ctor()
-	
+	self.queue = nil 	
 end
 
-function StoryLayer:generateQueue(script_tab)
-	
+function StoryLayer:setQueue(tab)
+	self.queue = tab 
 end
+
+function StoryLayer:setGUI()
+	for name,value in pairs(self.queue) do
+		print(name)
+		print(value)
+	end
+end
+
+return StoryLayer
