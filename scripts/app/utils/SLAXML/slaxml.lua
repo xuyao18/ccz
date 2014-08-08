@@ -35,6 +35,7 @@ local SLAXML = {
 }
 
 function SLAXML:parser(callbacks)
+	dump(callbacks)
 	return { _call=callbacks or self._call, parse=SLAXML.parse }
 end
 
