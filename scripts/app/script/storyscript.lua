@@ -6,7 +6,7 @@ local starter = nil
 local text = nil 
 local attr = nil
 local queue = nil 
-local scrits = nil
+local scripts = nil
 
 local storyparser = slaxml:parser({
 	startElement = function(name,nsURI,nsPrefix)
@@ -24,10 +24,10 @@ local storyparser = slaxml:parser({
 
     closeElement = function(name,nsURI)                
         print("close "..name)       
-    	if scrits == nil then 
-    		scrits = {}
+    	if scripts == nil then 
+    		scripts = {}
     	end
-    	table.insert(scrits, {starter, attr})
+    	table.insert(scripts, {starter, attr})
     end, -- When "</foo>" or </x:foo> or "/>" is seen
 
     text = function(text)                      
@@ -48,9 +48,11 @@ local storyparser = slaxml:parser({
 
 function StoryScript:analyse(content)
 	require("app.utils.xml_utils")
-    dump(storyparser)
-	tabs = parse(content, storyparser)
-	return tabs
+	parse(content, storyparser)
+    print("")
+    dump(scripts)
+    
+	return scripts
 end
 
 return StoryScript
