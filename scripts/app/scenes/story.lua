@@ -3,6 +3,7 @@ local StoryScene = class('StoryScene', function()
 end)
 scpt = require("app.script.storyscript")
 stlay = require("app.layer.storylayer")
+require("app.utils.log")
 
 function StoryScene:ctor()
 	self.script = nil
@@ -16,6 +17,8 @@ function StoryScene:analyseScript(path)
 	self.content = io.readfile(path)
 	scpt.content = self.content
 	self.script = scpt:analyse(self.content)
+	log(DEBUG, "-----------------SCRIPT-------------------------")
+	--dump(self.script)
 	self.layer:setQueue(self.script)
 	self.layer:setGUI()
 end
