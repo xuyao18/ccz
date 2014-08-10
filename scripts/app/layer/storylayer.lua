@@ -11,7 +11,7 @@ function StoryLayer:setQueue(tab)
 end
 
 function StoryLayer:setGUI()
-	dump(self.queue)
+--	dump(self.queue)
 	for name,value in pairs(self.queue) do
 		--dump(value)
 	end
