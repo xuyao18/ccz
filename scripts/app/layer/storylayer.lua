@@ -11,16 +11,20 @@ function StoryLayer:setQueue(tab)
 end
 
 function StoryLayer:setGUI()
-	dump(self.queue)
+	--dump(self.queue)
 	self:parseTable(self.queue)
 end
 
 function StoryLayer:parseTable(tab)
-	for idx,value in ipairs(tab) do
+	for key,value in pairs(tab) do
 		if (type(value) == "table") then 
 			StoryLayer:parseTable(value)
 		else
-			--print("value"..value)
+			if key =='head' then
+			print("head->"..value)
+		elseif key == 'text' then
+			print("text->"..value)
+		end	
 		end
 	end
 end
