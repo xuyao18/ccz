@@ -35,8 +35,8 @@ local storyparser = slaxml:parser({
             sonThings = {}
             index = sonThings 
         else 
-            content = {}
-            curnode = {starter, content}
+            --content = {}
+            --curnode = {starter, content}
         end
 	end, -- When "<foo" or <x:foo is seen
 
@@ -98,7 +98,10 @@ local storyparser = slaxml:parser({
             log(DEBUG, index[starter])
             log(DEBUG, text)
             log(DEBUG, starter)
-            table.insert(content, {'text', text})
+            curnode = {}
+            curnode['head'] = starter
+            curnode['text'] = text
+            --table.insert(content, {'text', text})
         end
     end, -- text and CDATA nodes
 

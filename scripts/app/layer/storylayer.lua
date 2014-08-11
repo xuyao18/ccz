@@ -11,7 +11,7 @@ function StoryLayer:setQueue(tab)
 end
 
 function StoryLayer:setGUI()
-	--dump(self.queue)
+	dump(self.queue)
 	self:parseTable(self.queue)
 end
 
