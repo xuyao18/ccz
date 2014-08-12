@@ -10,11 +10,18 @@ heads = {}
 
 local StoryWidgetParser{
 	["variableTest"] = function(value)
-
+		table.insert(variable, value)
 	end,
 	["loadBackground"] = function(value)
-		background = display.newBackgroundTilesSprite(value)
-		StoryLayer:setBackgroundSpriteForState(background, nil)
+		local path = nil
+		if string.sub(value, 1, 5) == 'MMAP' then
+			local idx = tolua.cast(number, string.sub(value,6))
+			idx = idx - 1
+			path = string.format("res/tmx/map/1- (%d).jpg", idx)
+		else
+			path = value
+		-- background = display.newBackgroundTilesSprite(path)
+		StoryLayer:setBackgroundImage(path, nil)
 	end,
 	["backGroundMusic"] = function(value)
 		audio.preloadMusic(value)
@@ -22,6 +29,7 @@ local StoryWidgetParser{
 	["headPortraitPlay"] = function(value)
 		local name,length,width,id = split(value,",", 4)
 		head = display.newSprite(name)
+		head.setTag(id)
 		table.insert(roles ,id)
 	end,
 	["headPortraitMove"] = function(value)
@@ -31,6 +39,7 @@ local StoryWidgetParser{
 	["headPortraitDisappear"] = function(value)
 	end,
 	["rolePlay"] = function(value)
+		local name , x, y, idx, id = split(value, ',', 5)
 	end,
 	["roleMove"] = function(value)
 	end,
