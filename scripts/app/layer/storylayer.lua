@@ -2,6 +2,64 @@ local StoryLayer = class("StoryLayer", function()
     return display.newLayer("StoryLayer")
 end)
 
+require("app.utils.util")
+variable = {}
+roles = {}
+heads = {}
+
+
+local StoryWidgetParser{
+	["variableTest"] = function(value)
+
+	end,
+	["loadBackground"] = function(value)
+		background = display.newBackgroundTilesSprite(value)
+		StoryLayer:setBackgroundSpriteForState(background, nil)
+	end,
+	["backGroundMusic"] = function(value)
+		audio.preloadMusic(value)
+	end,
+	["headPortraitPlay"] = function(value)
+		local name,length,width,id = split(value,",", 4)
+		head = display.newSprite(name)
+		table.insert(roles ,id)
+	end,
+	["headPortraitMove"] = function(value)
+		local id , x, y = split(value, ',', 3)
+		
+	end,
+	["headPortraitDisappear"] = function(value)
+	end,
+	["rolePlay"] = function(value)
+	end,
+	["roleMove"] = function(value)
+	end,
+	["dialogue"] = function(value)
+	end,
+	["storyAction"] = function(value)
+	end,
+	["ChoiceBox"] = function(value)
+	end,
+	["sonThings"] = function(value)
+	end,
+	["codeValueTest"] = function(value)
+	end,
+	["addCareerism"] = function(value)
+	end,
+	["delayTime"] = function(value)
+	end,
+	["SceneNameSet"] = function(value)
+	end,
+	["RShowMenu"] = function(value)
+	end,
+	["Plot"] = function(value)
+	end,
+	["Scene"] = function(value)
+	end,
+	["section"] = function(value)
+	end,
+}
+
 function StoryLayer:ctor()
 	self.queue = nil 	
 end
@@ -25,8 +83,11 @@ function StoryLayer:parseTable(tab)
 		elseif key == 'text' then
 			print("text->"..value)
 		end	
-		end
 	end
+end
+
+function StoryLayer:parseWidget(key, value)
+
 end
 
 return StoryLayer
