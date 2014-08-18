@@ -17,13 +17,13 @@ local content = nil
 
 local storyparser = slaxml:parser({
 	startElement = function(name,nsURI,nsPrefix)
-        log(DEBUG,"start name"..name)       
+        log(INFO,"start name"..name)       
 		starter = name
         if name == "Plot" then
             Plot = {}
             index = Plot
-            log(DEBUG, "index -> Plot")
-            log(DEBUG, index)
+            log(INFO, "index -> Plot")
+            log(INFO, index)
         
         elseif name == "Scene" then
             Scene = {}
@@ -44,14 +44,14 @@ local storyparser = slaxml:parser({
     	if attr == nil then
     		attr = {}
     	end
-        log(DEBUG, "attr "..name.." value ".. value)       
+        log(INFO, "attr "..name.." value ".. value)       
     	--table.insert(attr, {name, value})
     end, -- attribute found on current element
 
     closeElement = function(name,nsURI)                
-        log(DEBUG,"close "..name.. " starter " .. starter) 
+        log(INFO,"close "..name.. " starter " .. starter) 
         if index[starter] then     
-            log(DEBUG, "inserting attr")
+            log(INFO, "inserting attr")
         end
         attr = nil 
         if name == "Plot" then
@@ -59,21 +59,21 @@ local storyparser = slaxml:parser({
             index = nil 
         
         elseif name == "Scene" then
-            log(DEBUG, "scene")
+            log(INFO, "scene")
             table.insert(Plot, {"Scene", Scene})
             Scene = nil
             index = Plot
             starter = "Plot"
         
         elseif name == "section" then
-            log(DEBUG,"close section------>"..name.."<-------------")
+            log(INFO,"close section------>"..name.."<-------------")
             table.insert(Scene, {"section", section})
             section = nil
             index = Scene
             starter = "Scene"
         
         elseif name == "sonThings" then
-            log(DEBUG, "sontings")
+            log(INFO, "sontings")
             table.insert(section, {"sonThings", sonThings})
             sonThings = nil
             index = section
@@ -87,17 +87,17 @@ local storyparser = slaxml:parser({
 
     text = function(text)  
         text = text:gsub("^%s*(.-)%s*$", "%1")
-        log(DEBUG, "length of text "..#text)                    
-        log(DEBUG, text)
-        log(DEBUG, starter)
-        log(DEBUG, "end...")
+        log(INFO, "length of text "..#text)                    
+        log(INFO, text)
+        log(INFO, starter)
+        log(INFO, "end...")
         if #text == 0 then
             return
         end
         if index then
-            log(DEBUG, index[starter])
-            log(DEBUG, text)
-            log(DEBUG, starter)
+            log(INFO, index[starter])
+            log(INFO, text)
+            log(INFO, starter)
             curnode = {}
             curnode['head'] = starter
             curnode['text'] = text
@@ -106,10 +106,10 @@ local storyparser = slaxml:parser({
     end, -- text and CDATA nodes
 
     comment = function(content)
-        log(DEBUG,"comments"..content)
+        log(INFO,"comments"..content)
     end, -- comments
     pi = function(target,content)
-        log(DEBUG,"PI target"..target.." content "..content)
+        log(INFO,"PI target"..target.." content "..content)
     end, -- processing instructions e.g. "<?yes mon?>"
 })
 
