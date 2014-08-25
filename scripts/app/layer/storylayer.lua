@@ -150,6 +150,7 @@ local StoryWidgetParser = {
 
 function StoryLayer:ctor()
 	self.queue = nil 	
+	self.scpidx = 1
 	log(DEBUG,"story layer ctor..")
 	--self:addChild(nil)
 end
@@ -161,6 +162,32 @@ end
 function StoryLayer:setGUI()
 	--dump(self.queue)
 	self:parseTable(self.queue)
+	self:addTouchEventListener(self:onTouch)
+end
+
+function onTouch(event, point)
+	if ("ended" == event)
+		self:doAction()
+	end
+end
+
+function StoryLayer:doAction(key, value)
+	local k = nil 
+	local v = nil 
+	if (type(value) == "table") then 
+			self:parseTable(value)
+	elseif key =='head' then
+		log(INFO,"head->"..value)
+		k = value
+	elseif key == 'text' then
+		log(INFO, "text->"..value)
+		v = value
+	end	
+	if k ~= nil and v ~= nil then
+		self:parseWidget(k, v)
+		k = nil 
+		v = nil
+	end
 end
 
 function StoryLayer:parseTable(tab)
