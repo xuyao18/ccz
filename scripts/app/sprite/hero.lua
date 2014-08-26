@@ -18,6 +18,7 @@ function Hero:ctor( )
 	self.MP = 0
 	self.HPinc = 0 
 	self.MPinc = 0
+	self.move = 0 
 
 	self.weapon = nil
 	self.armor = nil 
