@@ -1,5 +1,7 @@
 headoffset = 7
 
+require("math")
+
 function trim(str)
   return (str:gsub("^%s*(.-)%s*$", "%1"))
 end
@@ -55,5 +57,10 @@ function transfer(x, y)
 	log(DEBUG, "x = "..x .. " y = "..y )
 	widthrate = display.width / 106 
 	heightrate = display.height / 66
-	return display.width - x * widthrate, display.height - y*heightrate
+	rawx = display.width - x * widthrate
+	rawy = display.height - y*heightrate
+	local radiam = 47
+	x = (rawx)*math.cos(math.rad(radiam)) + (rawy) * math.sin(math.rad(radiam))
+	y = -(rawx)*math.sin(math.rad(radiam)) + (rawy) * math.cos(math.rad(radiam)) + 700
+	return x,y 
 end

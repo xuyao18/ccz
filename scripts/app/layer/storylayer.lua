@@ -151,6 +151,7 @@ local StoryWidgetParser = {
 function StoryLayer:ctor()
 	self.queue = nil 	
 	self.scpidx = 1
+	self.scpqueue = {}
 	log(DEBUG,"story layer ctor..")
 	--self:addChild(nil)
 end
@@ -161,33 +162,28 @@ end
 
 function StoryLayer:setGUI()
 	--dump(self.queue)
+	log(DEBUG, "SET GUI..")
 	self:parseTable(self.queue)
-	self:addTouchEventListener(self:onTouch)
+	self:setTouchEnabled(true)
+	self:addNodeEventListener(cc.NODE_TOUCH_EVENT, function(event)
+		log(DEBUG, "touch event .."..event.name)
+		if event.name == "began"or event.name == "added" then
+			ret = self:doAction()
+		end
+		return false
+	end)
+	
 end
 
-function onTouch(event, point)
-	if ("ended" == event)
-		self:doAction()
+function StoryLayer:doAction()
+	log(DEBUG, "action")
+	if self.scpidx > #self.scpqueue then
+		return false
 	end
-end
-
-function StoryLayer:doAction(key, value)
-	local k = nil 
-	local v = nil 
-	if (type(value) == "table") then 
-			self:parseTable(value)
-	elseif key =='head' then
-		log(INFO,"head->"..value)
-		k = value
-	elseif key == 'text' then
-		log(INFO, "text->"..value)
-		v = value
-	end	
-	if k ~= nil and v ~= nil then
-		self:parseWidget(k, v)
-		k = nil 
-		v = nil
-	end
+	k,v = self.scpqueue[self.scpidx][1],self.scpqueue[self.scpidx][2]
+	self:parseWidget(k, v)
+	self.scpidx = self.scpidx + 1
+	return true
 end
 
 function StoryLayer:parseTable(tab)
@@ -204,7 +200,8 @@ function StoryLayer:parseTable(tab)
 			v = value
 		end	
 		if k ~= nil and v ~= nil then
-			self:parseWidget(k, v)
+			
+			table.insert(self.scpqueue, {k,v})
 			k = nil 
 			v = nil
 		end
