@@ -8,7 +8,7 @@ function Hero:ctor( )
 	self.hero = nil --node in layer map
 	self.skills = {}
 	self.items = {}
-	self.army = nil 
+	self.army = nil --兵种
 	self.name = nil
 
 	--basic stats
@@ -50,6 +50,19 @@ function Hero:ctor( )
 	--utility
 	self.barea = {}
 	self.confirm = {}
+
+	--real time status
+	self.nomagic = false
+	self.nomove = false
+	self.doom = false
+	self.debuff = 0
+	self.buff = 0
+	self.bufftime = 0 
+	self.debufftime = 0
+
+	--mother pointers
+	self.maplayer = nil 
+	self.mapscene = nil 
 end
 
 function Hero:getHero(name)
@@ -69,7 +82,7 @@ function Hero:getAttack( )
 	
 end
 
-function Hero:getMoveArea( )
+function Hero:getMoveArea()
 	self.barea = self:getBasicArea(self.move)
 	self.confirm = {}
 	for idx , v in ipairs(barea) do
@@ -80,6 +93,12 @@ function Hero:getMoveArea( )
 end
 
 function Hero:getCost(x, y)
+	local target = self.maplayer:getTile(x,y)
+	if target:getHero() != nil then
+		return 255
+	end
+	if target:getCost(self.army)
+
 	return 1
 end
 
@@ -107,7 +126,7 @@ function Hero:getBasicArea(range)
 	--if move , range is hero's move , if magic , range can be set .
 	--get the basic area the hero can move as below. easy math trick.
 	--              *
-	--             *** 
+	--             ***
 	--            **H**
 	--             ***
 	--              *
@@ -127,4 +146,8 @@ function Hero:getBasicArea(range)
 		end
 	end
 	return areas
+end
+
+function Hero:persist()
+	
 end

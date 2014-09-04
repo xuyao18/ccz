@@ -7,11 +7,12 @@ local physic_worth = {kill = 78, over10 = 14 , tgtless10 = 14, middle = 8, bad =
 local skill_worth = {}
 local postion_worth = {noinrange = 1, cure = 8, imcure = 58, tgtatk = 10, tgtgot = 9 , notgt = -1}
 
-function AI:AIMove(unit, handler, x, y )
+function AI:getMoveArea(unit)
 	-- ai move , get the action 
+	unit:get
 end
 
-function AI:getPath( unit, handler, x, y)
+function AI:getPath( unit, handler, tx, ty)
 	-- get the nearest path , using a star
 end
 
@@ -20,8 +21,28 @@ function AI:getAction( unit, handler, x, y)
 	-- if paattack 
 end
 
-function AI:getWorth(starter, action, target)
+function AI:getWorth(starter, action, tx, ty)
 	-- get action worth
+end
+
+function AI:getPhysicalWorth( starter, action, tx, ty)
+	-- body
+end
+
+function AI:getMagicWorth( starter, action, tx, ty )
+	-- body
+end
+
+function AI:doMove( starter, tx, ty )
+	-- body
+end
+
+function AI:doAction( starter, target, action)
+	--do the certain action 
+end
+
+function AI:getResult( starter, target )
+	--get the action's result
 end
 
 function AI:aiRun(unit, handler)
