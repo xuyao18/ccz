@@ -51,16 +51,26 @@ function getStobj(tab, name)
 	return string.format("res/stobj/%d-1.png", (v.image * 2) + 1), string.format("res/stobj/%d-1.png",(v.image * 2) + 2)
 end
 
-function transfer(x, y)
+function transfer(x, y, wresize, hresize)
 	--x = tolua.cast(x, "number")
 	--y = tolua.cast(y, "number")
-	log(DEBUG, "x = "..x .. " y = "..y )
-	widthrate = display.width / 106 
-	heightrate = display.height / 66
-	rawx = display.width - x * widthrate
-	rawy = display.height - y*heightrate
-	local radiam = 47
-	x = (rawx)*math.cos(math.rad(radiam)) + (rawy) * math.sin(math.rad(radiam))
-	y = -(rawx)*math.sin(math.rad(radiam)) + (rawy) * math.cos(math.rad(radiam)) + 700
-	return x,y 
+	--widthrate = display.width / 106 
+	--heightrate = display.height / 66
+	--rawx = display.width - x * widthrate
+	--rawy = display.height - y*heightrate
+	--local radiam = 75
+	--x = (rawx)*math.cos(math.rad(radiam)) - (rawy) * math.sin(math.rad(radiam)) 
+	--y = (rawx)*math.sin(math.rad(radiam)) - (rawy) * math.cos(math.rad(radiam)) + 700
+	--local a = (148 * x + 148 * y) / 480
+	--local b = (58* x + 138 * y) / 854
+
+	local a = ((150 - x - y) / 2 * 8 -4) * hresize
+	local b = ((x - y + 42) / 2 * 16 -16) * wresize
+
+	
+	a = a + hresize * 20
+	b = (b ) + wresize * 48
+	print('x = ', x , 'y = ', y, 'a = ', a, 'b = ', b)
+
+	return b, a
 end

@@ -28,12 +28,14 @@ local storyparser = slaxml:parser({
         elseif name == "Scene" then
             Scene = {}
             index = Scene
-        elseif name == "section" then
+        elseif name == "section" or name == "Section" then
             section = {}
             index = section 
+            
         elseif name == "sonThings" then
             sonThings = {}
             index = sonThings 
+            
         else 
             --content = {}
             --curnode = {starter, content}
@@ -65,7 +67,7 @@ local storyparser = slaxml:parser({
             index = Plot
             starter = "Plot"
         
-        elseif name == "section" then
+        elseif name == "section" or name == "Section" then
             log(INFO,"close section------>"..name.."<-------------")
             table.insert(Scene, {"section", section})
             section = nil
