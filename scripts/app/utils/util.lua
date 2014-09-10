@@ -23,6 +23,24 @@ function split(s, p, size)
 	end
 end
 
+function split_dlg(value)
+	local id = 0 
+	local index = 0 
+	local name = ""
+	local line = ""
+	index = string.find(value, ",")
+	id = string.sub(value, 1, index - 1 )
+	value = string.sub(value, index + 1)
+	index = string.find(value, ":")
+	name = string.sub(value, 1, index -1)
+	line = string.sub(value, index + 1)
+	id = trim(id)
+	name = trim(name)
+	line = trim(line)
+	return id, name, line
+
+end
+
 function getHead( tab, name, offset)
 	if string.sub(name, 1,1) == '!' then
 		name = string.sub(name, 2, -1)
@@ -52,22 +70,8 @@ function getStobj(tab, name)
 end
 
 function transfer(x, y, wresize, hresize)
-	--x = tolua.cast(x, "number")
-	--y = tolua.cast(y, "number")
-	--widthrate = display.width / 106 
-	--heightrate = display.height / 66
-	--rawx = display.width - x * widthrate
-	--rawy = display.height - y*heightrate
-	--local radiam = 75
-	--x = (rawx)*math.cos(math.rad(radiam)) - (rawy) * math.sin(math.rad(radiam)) 
-	--y = (rawx)*math.sin(math.rad(radiam)) - (rawy) * math.cos(math.rad(radiam)) + 700
-	--local a = (148 * x + 148 * y) / 480
-	--local b = (58* x + 138 * y) / 854
-
 	local a = ((150 - x - y) / 2 * 8 -4) * hresize
 	local b = ((x - y + 42) / 2 * 16 -16) * wresize
-
-	
 	a = a + hresize * 20
 	b = (b ) + wresize * 48
 	print('x = ', x , 'y = ', y, 'a = ', a, 'b = ', b)

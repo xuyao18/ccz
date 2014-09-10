@@ -117,6 +117,7 @@ local StoryWidgetParser = {
 		role['frameset2'] = frameset2
 		x, y = transfer(x, y, wresize, hresize)
 		role:setPosition(CCPoint(x,y))
+		role["name"] = name
 		self:addChild(role)
 		roles[id] = role
 		role:retain()
@@ -161,17 +162,22 @@ local StoryWidgetParser = {
 		end
 	end,
 	["dialogue"] = function(self, value)
-	local str = "[background=bg/dlg_bg.png] [/background][head=wsk1.png]口[/head][color=a number=998]这是一条测试数据[/color]"
-    local ricLab = RichLabel.new({str=str, font="Microsoft Yahei", fontSize=12, rowWidth=230, rowSpace = -2})
-    ricLab:setPosition(ccp(display.cx-200, display.height-50))
-    self:addChild(ricLab)
+		local id, title , line = split_dlg(value)
+		print("id ", id , " titile ", title, " line " , line)
+		local role = roles[id]
+		local head = getHead(heros, role["name"])
+		local str = "[background=dlg_bg.png] [/background][head=%s]口[/head][color=a number=998]%s[/color]"
+		str = string.format(str, head, line)
+		print("str", str)
+    	local ricLab = RichLabel.new({str=str, font="Microsoft Yahei", fontSize=12, rowWidth=230, rowSpace = -2})
+   		ricLab:setPosition(ccp(display.cx-200, display.height-50))
+   	 	self:addChild(ricLab)
 
     -- 添加事件监听函数
-    local function listener(button, params)
-        print("click dialog.", params.text, params.tag, params.number)
-    end
-    ricLab:setClilckEventListener(listener)
-
+    	local function listener(button, params)
+        	print("click dialog.", params.text, params.tag, params.number)
+    	end
+    	ricLab:setClilckEventListener(listener)
 	end,
 	["storyAction"] = function(self, value)
 		local frame, dir, id = split(value, "," , 3)

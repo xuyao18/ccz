@@ -247,6 +247,7 @@ function RichLabel:tab_createButton(params)
 end
 
 function RichLabel:backgroundManage(object, params, useWidth)
+	print(params.background)
 	local bg = display.newTilesSprite(params.background, CCRect(0, 0 , 390, 90))
 	bg:setAnchorPoint(ccp(0, 1))
 	object:addChild(bg, -5)
