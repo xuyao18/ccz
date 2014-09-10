@@ -1,7 +1,7 @@
 local StoryScene = class('StoryScene', function()
 	return display.newScene("StoryScene")
 end)
-scpt = require("app.script.storyscript")
+scpt = require("app.script.plotscript")
 stly = require("app.layer.storylayer")
 require("app.utils.log")
 

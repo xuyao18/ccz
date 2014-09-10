@@ -9,7 +9,7 @@ local postion_worth = {noinrange = 1, cure = 8, imcure = 58, tgtatk = 10, tgtgot
 
 function AI:getMoveArea(unit)
 	-- ai move , get the action 
-	unit:get
+	
 end
 
 function AI:getPath( unit, handler, tx, ty)

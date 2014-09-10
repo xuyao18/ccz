@@ -1,7 +1,7 @@
 require("app.script.script")
 require("app.utils.log")
 slaxml = require("app.utils.SLAXML.slaxml")
-StoryScript = class(Script)
+PlotScript = class(Script)
 
 local starter = nil
 local text = nil 
@@ -15,7 +15,7 @@ local index = nil
 local curnode = nil
 local content = nil 
 
-local storyparser = slaxml:parser({
+local parser = slaxml:parser({
 	startElement = function(name,nsURI,nsPrefix)
         log(INFO,"start name"..name)       
 		starter = name
@@ -115,10 +115,10 @@ local storyparser = slaxml:parser({
     end, -- processing instructions e.g. "<?yes mon?>"
 })
 
-function StoryScript:analyse(content)
+function PlotScript:analyse(content)
 	require("app.utils.xml_utils")
-	parse(content, storyparser)
+	parse(content, parser)
 	return Plot
 end
 
-return StoryScript
+return PlotScript
