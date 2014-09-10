@@ -3,7 +3,7 @@ local MapLayer = class("MapLayer", function()
 end)
 
 require("app.data.const")
-
+scpt = require("app.script.plotscript")
 
 local MapParser{
 	
@@ -13,14 +13,20 @@ local MapParser{
 local map_path = nil 
 local map = nil 
 local layers = nil 
-local objects = nil 
+local objects = nil
+local scripts = nil 
 
 
-function MapLayer:load_map(path)
-	self.map_path = path 
-	self.map =  CCTMXTiledMap:create(path)
+function MapLayer:init_layer(tmxpath, scptpath)
+	self.map_path = tmxpath 
+	self.map = CCTMXTiledMap:create(tmxpath)
 	self:analyse_layer()
 	self:analyse_map()
+
+	self.content = io.readfile(scptpath)
+	scpt.content = self.content
+	self.scripts = scpt:analyse(self.content)
+	
 	addChild(map)	
 end
 
@@ -41,8 +47,10 @@ end
 function MapLayer:analyse_layer()
 	local curlayer = nil
 	for idx, layer_name in ipairs(layer_names) do
-		curlayer = 
+		curlayer = self.map:layerNamed(layer_name)
+		table.insert(layers, curlayer)
 	end
+	self.objects = self.map:getObjects()
 end
 
 
