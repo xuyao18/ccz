@@ -17,11 +17,11 @@ local objects = nil
 local scripts = nil 
 
 
-function MapLayer:init_layer(tmxpath, scptpath)
+function MapLayer:initLayer(tmxpath, scptpath)
 	self.map_path = tmxpath 
 	self.map = CCTMXTiledMap:create(tmxpath)
-	self:analyse_layer()
-	self:analyse_map()
+	self:analyseLayer()
+	self:analyseMap()
 
 	self.content = io.readfile(scptpath)
 	scpt.content = self.content
@@ -30,7 +30,7 @@ function MapLayer:init_layer(tmxpath, scptpath)
 	addChild(map)	
 end
 
-function MapLayer:analyse_map()
+function MapLayer:analyseMap()
 
 	local widthcount = self.map:getMapSize().width / TILE_WIDTH
 	local heightcound = self.map:getMapSize().height / TILE_HEIGHT
@@ -44,7 +44,7 @@ function MapLayer:analyse_map()
 	end
 end
 
-function MapLayer:analyse_layer()
+function MapLayer:analyseLayer()
 	local curlayer = nil
 	for idx, layer_name in ipairs(layer_names) do
 		curlayer = self.map:layerNamed(layer_name)

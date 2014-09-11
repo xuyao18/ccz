@@ -73,11 +73,15 @@ function Hero:load(param)
 	-- load hero from save file
 end
 
-function Hero:getEffectAtk( )
+function Hero:save()
+	
+end
+
+function Hero:getEffectAtk()
 	-- body
 end
 
-function Hero:getAttack( )
+function Hero:getAttack()
 	self.atk = self.str / 2 + self.attr_str * self.level
 	
 end
@@ -88,7 +92,7 @@ function Hero:getMoveArea()
 	for idx , v in ipairs(barea) do
 		confirm[v] = 0
 	end
-	self:MoveLoop(self.move , self.location.x , self.location.y, self.barea, self.confirm)
+	self:_moveLoop(self.move , self.location.x , self.location.y, self.barea, self.confirm)
 	return barea 
 end
 
@@ -102,7 +106,7 @@ function Hero:getCost(x, y)
 	return 1
 end
 
-function Hero:MoveLoop(m, x, y, arearange, confirm)
+function Hero:_moveLoop(m, x, y, arearange, confirm)
 	k = table.keyof(arearange, {x,y})
 	m = m - self:getCost(x,y)
 	if (k == nil and m < 0) or confirm[{x,y}] == 4
@@ -115,10 +119,10 @@ function Hero:MoveLoop(m, x, y, arearange, confirm)
 	else
 		m = m - self:getCost(x,y)
 		confirm[{x, y }] = confirm[{x, y }] + 1
-		self:MoveLoop(m, x - 1, y , arearange, confirm)
-		self:MoveLoop(m, x , y + 1, arearange, confirm)
-		self:MoveLoop(m, x + 1, y , arearange, confirm)
-		self:MoveLoop(m, x , y - 1, arearange, confirm)
+		self:_moveLoop(m, x - 1, y , arearange, confirm)
+		self:_moveLoop(m, x , y + 1, arearange, confirm)
+		self:_moveLoop(m, x + 1, y , arearange, confirm)
+		self:_moveLoop(m, x , y - 1, arearange, confirm)
 	end
 end
 
@@ -148,6 +152,3 @@ function Hero:getBasicArea(range)
 	return areas
 end
 
-function Hero:persist()
-	
-end
