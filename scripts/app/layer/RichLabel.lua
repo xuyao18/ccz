@@ -1,41 +1,23 @@
 
 local ChineseSize = 3 -- 修正宽度缺陷(范围:3~4)
 local RichLabel = class("RichLabel", function()
-    return display.newLayer(300,400)
+    return display.newLayer()
 end)
 
-local LABELOFFSET = ccp(80, -8)
+
 
 function RichLabel:ctor(param)
 	param.str = param.str or "传入的字符为nil"
 	param.font = param.font or "Microsoft Yahei"
-	param.fontSize = param.fontSize or 12
-	param.rowWidth = param.rowWidth or 180
-	param.rowSpace = param.rowSpace or -3
+	param.fontSize = param.fontSize or 14
+	param.rowWidth = param.rowWidth or 280
+	param.rowSpace = param.rowSpace or -4
 	local textTab = self:initData(param.str, param.font, param.fontSize, param.rowWidth)
 	self:setContentSize(CCSize(1, 1)) -- richlabel统一节点且不影响其它
 	local ptab, copyVar = self:tab_addtext(textTab) 
 
-	local bg = display.newSprite("bg.png", 0, -10)
-    bg:setAnchorPoint(ccp(0, 1))
-    bg:setPositionX(100 + 16)
-    self:addChild(bg, 1)
-
-    local l = display.newSprite("cleft.png", 0, -10)
-    l:setAnchorPoint(ccp(0, 1))
-    l:setPositionX(100)
-	self:addChild(l, 1)
-	
-	print(l:getZOrder())
-
-	local r = display.newSprite("cright.png", 0, -10)
-    r:setAnchorPoint(ccp(0, 1))
-    r:setPositionX(360)
-	self:addChild(r, 1)
-	print(r:getZOrder())
-
 	local ocWidth = 0  -- 当前占宽
-	local ocRow   = 1  -- 当前行
+	local ocRow   = 3  -- 当前行
 	local ocHeight = 0 -- 当前高度
 	local btn,useWidth,useHeight = 0,0,0
 	for k,v in pairs(copyVar) do
@@ -54,12 +36,11 @@ function RichLabel:ctor(param)
 		local byteSize = math.floor((maxsize+2)/ChineseSize)
 		params.width  = byteSize*params.breadth     -- 控件宽度
 		params.height = maxsize                     -- 控件高度
-		params.x = ocWidth        					-- 控件x坐标
-		params.y = (ocHeight)                      -- 控件y坐标
+		params.x = ocWidth       					-- 控件x坐标
+		params.y = -(ocHeight)                      -- 控件y坐标
 		params.scene = self
-    	btn,useWidth,useHeight = self:tab_createButton(params)
+		btn,useWidth,useHeight = self:tab_createButton(params)
 	end
-	
 end
 
 -- 初始化数据
@@ -200,9 +181,6 @@ end
 
 function RichLabel:tab_createButton(params)
 	--ui/texture/
-	if params.head then 
-		params.x = params.x
-	end
     local btn = cc.ui.UIPushButton.new("wsk.png", {scale9 = true})
         :setButtonSize(params.width, params.height)
         :setButtonLabel("normal", ui.newTTFLabel({
@@ -212,54 +190,60 @@ function RichLabel:tab_createButton(params)
             font  = params.font,
         }))
         :onButtonPressed(function(event)
-        	event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
+        	event.target:getButtonLabel("normal"):setPosition(ccp(0, 0))
         end)
         :onButtonClicked(function(event)
-            event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
+            event.target:getButtonLabel("normal"):setPosition(ccp(0, 0))
             if self.listener then self.listener(event.target, params) end
         end)
         :onButtonRelease(function(event)
-        	event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
+        	event.target:getButtonLabel("normal"):setPosition(ccp(0, 0))
     	end)
         :align(display.LEFT_TOP, params.x, params.y)
         :addTo(params.scene)
-    btn:setZOrder(2)
     btn:setButtonLabelAlignment(display.TOP_LEFT)
     local normalLab = btn:getButtonLabel("normal")
-    normalLab:setPosition(LABELOFFSET)
+    normalLab:setPosition(ccp(0, 0))
     local useWidth = normalLab:getBoundingBox().size.width
     local useHeight = normalLab:getBoundingBox().size.height
-
     if params.head then
-    	print("head")
     	self:headManage(btn, params, useWidth)
     end
     if params.image then
-    	print("image")
     	self:imageManage(btn, params, useWidth)
     end
-    if params.background then
-    	print("BACKGROUND")
-    	self:backgroundManage(btn , params, useWidth)
+    if params.title then 
+    	self:titleManage(btn, params)
     end
-    print(btn:getZOrder())
+	dump(params)
     return btn,useWidth,useHeight
 end
 
-function RichLabel:backgroundManage(object, params, useWidth)
-	print(params.background)
-	local bg = display.newTilesSprite(params.background, CCRect(0, 0 , 390, 90))
-	bg:setAnchorPoint(ccp(0, 1))
-	object:addChild(bg, -5)
-	object.imageSprite = bg
-	object:setZOrder(0)
+function RichLabel:headManage(object, params, useWidth)
+	local g = display.newSprite(params.image, 0, -4)
+    g:setAnchorPoint(ccp(0, 1))
+	object:addChild(g, 1)
+	object:setButtonLabelString("normal", "")
+    object.imageSprite = g
 end
 
-function RichLabel:headManage(object, params, useWidth)
-	local g = display.newSprite(params.head, 10, -5)
+function RichLabel:titleManage(object, params)
+	print("title manager?")
+	object:align(display.LEFT_TOP, params.x , params.align)
+	print("title manager!@")
+end
+
+-- 
+function RichLabel:imageManage(object, params, useWidth)
+	local g = display.newSprite(params.image, 0, -4)
+    g:setScaleX(useWidth / g:getContentSize().width)
+    g:setScaleY(params.size / g:getContentSize().height)
     g:setAnchorPoint(ccp(0, 1))
-	object:addChild(g, 2)
+	object:addChild(g, 1)
 	object:setButtonLabelString("normal", "")
+	local move1 = CCMoveBy:create(0.5, ccp(0, 2))
+    local move2 = CCMoveBy:create(0.5, ccp(0, -2))
+    g:runAction(CCRepeatForever:create(CCSequence:createWithTwoActions(move1, move2)))
     object.imageSprite = g
 end
 
@@ -385,7 +369,7 @@ function  RichLabel:GetTextColor(xStr)
         local b = tmp[2] * 16 + tmp[1]
         return ccc3(r,g,b)
     end
-    return ccc3(0,0,0)
+    return ccc3(255,255,255)
 end
 
 -- 设置监听函数
