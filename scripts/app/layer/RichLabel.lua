@@ -1,23 +1,39 @@
 
 local ChineseSize = 3 -- 修正宽度缺陷(范围:3~4)
 local RichLabel = class("RichLabel", function()
-    return display.newLayer()
+    return display.newLayer(300,400)
 end)
 
-
+local LABELOFFSET = ccp(80, -8)
 
 function RichLabel:ctor(param)
+
 	param.str = param.str or "传入的字符为nil"
 	param.font = param.font or "Microsoft Yahei"
-	param.fontSize = param.fontSize or 14
-	param.rowWidth = param.rowWidth or 280
-	param.rowSpace = param.rowSpace or -4
+	param.fontSize = param.fontSize or 12
+	param.rowWidth = param.rowWidth or 180
+	param.rowSpace = param.rowSpace or -3
 	local textTab = self:initData(param.str, param.font, param.fontSize, param.rowWidth)
 	self:setContentSize(CCSize(1, 1)) -- richlabel统一节点且不影响其它
 	local ptab, copyVar = self:tab_addtext(textTab) 
 
+	local bg = display.newSprite("bg.png", 0, -10)
+    bg:setAnchorPoint(ccp(0, 1))
+    bg:setPositionX(100 + 16)
+    self:addChild(bg, 1)
+
+    local l = display.newSprite("cleft.png", 0, -10)
+    l:setAnchorPoint(ccp(0, 1))
+    l:setPositionX(100)
+	self:addChild(l, 1)
+
+	local r = display.newSprite("cright.png", 0, -10)
+    r:setAnchorPoint(ccp(0, 1))
+    r:setPositionX(360)
+	self:addChild(r, 1)
+
 	local ocWidth = 0  -- 当前占宽
-	local ocRow   = 3  -- 当前行
+	local ocRow   = 1  -- 当前行
 	local ocHeight = 0 -- 当前高度
 	local btn,useWidth,useHeight = 0,0,0
 	for k,v in pairs(copyVar) do
@@ -36,11 +52,15 @@ function RichLabel:ctor(param)
 		local byteSize = math.floor((maxsize+2)/ChineseSize)
 		params.width  = byteSize*params.breadth     -- 控件宽度
 		params.height = maxsize                     -- 控件高度
-		params.x = ocWidth       					-- 控件x坐标
-		params.y = -(ocHeight)                      -- 控件y坐标
+		params.x = ocWidth         					-- 控件x坐标
+		params.y = (-ocHeight)                      -- 控件y坐标
 		params.scene = self
-		btn,useWidth,useHeight = self:tab_createButton(params)
+		if params.color then
+			params.x = params.x + 20
+		end
+    	btn,useWidth,useHeight = self:tab_createButton(params)
 	end
+	
 end
 
 -- 初始化数据
@@ -65,7 +85,7 @@ function RichLabel:accountTextLen(str, tsize)
 	for k,v in pairs(list) do
 		local a = string.len(v)
 		-- 懒得写解析方法了
-		 local label = ui.newTTFLabel({text = v, size = tsize})
+		local label = ui.newTTFLabel({text = v, size = tsize})
     	a = tsize/(label:getContentSize().width)
     	local b = str_formatToNumber(ChineseSize/a, 4)
 		aLen = aLen + b
@@ -86,6 +106,7 @@ function RichLabel:addDataToRenderTab(copyVar, tab, text, index, current)
 end
 
 function RichLabel:tab_addtext(var)
+
 	local allTab = {}  
 	-- local endRowUse = 0 
 	local copyVar = {}  
@@ -181,6 +202,9 @@ end
 
 function RichLabel:tab_createButton(params)
 	--ui/texture/
+	if params.head then 
+		params.x = params.x
+	end
     local btn = cc.ui.UIPushButton.new("wsk.png", {scale9 = true})
         :setButtonSize(params.width, params.height)
         :setButtonLabel("normal", ui.newTTFLabel({
@@ -190,60 +214,61 @@ function RichLabel:tab_createButton(params)
             font  = params.font,
         }))
         :onButtonPressed(function(event)
-        	event.target:getButtonLabel("normal"):setPosition(ccp(0, 0))
+        	event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
         end)
         :onButtonClicked(function(event)
-            event.target:getButtonLabel("normal"):setPosition(ccp(0, 0))
-            if self.listener then self.listener(event.target, params) end
+            event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
+            if self.listener then self.listener:doAction() end
         end)
         :onButtonRelease(function(event)
-        	event.target:getButtonLabel("normal"):setPosition(ccp(0, 0))
+        	event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
     	end)
         :align(display.LEFT_TOP, params.x, params.y)
         :addTo(params.scene)
+    btn:setZOrder(2)
     btn:setButtonLabelAlignment(display.TOP_LEFT)
     local normalLab = btn:getButtonLabel("normal")
-    normalLab:setPosition(ccp(0, 0))
+    normalLab:setPosition(LABELOFFSET)
     local useWidth = normalLab:getBoundingBox().size.width
     local useHeight = normalLab:getBoundingBox().size.height
+
     if params.head then
+    	
     	self:headManage(btn, params, useWidth)
     end
     if params.image then
+    	
     	self:imageManage(btn, params, useWidth)
+    end
+    if params.background then
+    	
+    	self:backgroundManage(btn , params, useWidth)
     end
     if params.title then 
     	self:titleManage(btn, params)
     end
-	dump(params)
     return btn,useWidth,useHeight
 end
 
-function RichLabel:headManage(object, params, useWidth)
-	local g = display.newSprite(params.image, 0, -4)
-    g:setAnchorPoint(ccp(0, 1))
-	object:addChild(g, 1)
-	object:setButtonLabelString("normal", "")
-    object.imageSprite = g
+function RichLabel:backgroundManage(object, params, useWidth)
+	local bg = display.newTilesSprite(params.background, CCRect(0, 0 , 390, 90))
+	bg:setAnchorPoint(ccp(0, 1))
+	object:addChild(bg, -5)
+	object.imageSprite = bg
+	object:setZOrder(0)
 end
 
 function RichLabel:titleManage(object, params)
-	print("title manager?")
+	
 	object:align(display.LEFT_TOP, params.x , params.align)
-	print("title manager!@")
+	
 end
 
--- 
-function RichLabel:imageManage(object, params, useWidth)
-	local g = display.newSprite(params.image, 0, -4)
-    g:setScaleX(useWidth / g:getContentSize().width)
-    g:setScaleY(params.size / g:getContentSize().height)
+function RichLabel:headManage(object, params, useWidth)
+	local g = display.newSprite(params.head, 10, -5)
     g:setAnchorPoint(ccp(0, 1))
-	object:addChild(g, 1)
+	object:addChild(g, 2)
 	object:setButtonLabelString("normal", "")
-	local move1 = CCMoveBy:create(0.5, ccp(0, 2))
-    local move2 = CCMoveBy:create(0.5, ccp(0, -2))
-    g:runAction(CCRepeatForever:create(CCSequence:createWithTwoActions(move1, move2)))
     object.imageSprite = g
 end
 
@@ -273,6 +298,7 @@ end
 -- 解析输入的文本
 function RichLabel:parseString(str, param)
 	local clumpheadTab = {} -- 标签头
+	str = str.gsub(str, "?", "？")
 	for w in string.gfind(str, "%b[]") do 
 		if  string.sub(w,2,2) ~= "/" then-- 去尾
 			table.insert(clumpheadTab, w)
@@ -360,7 +386,6 @@ function  RichLabel:GetTextColor(xStr)
             elseif(str == 'F' or str == 'f') then
                 tmp[6-i] = 15
             else
-                print("Wrong color value.")
                 tmp[6-i] = 0
             end
         end
@@ -369,7 +394,7 @@ function  RichLabel:GetTextColor(xStr)
         local b = tmp[2] * 16 + tmp[1]
         return ccc3(r,g,b)
     end
-    return ccc3(255,255,255)
+    return ccc3(0,0,0)
 end
 
 -- 设置监听函数

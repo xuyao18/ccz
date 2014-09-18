@@ -14,10 +14,14 @@ wresize = 1
 hresize = 1
 
 local StoryWidgetParser = {
+-- if need input by user, return true.
+-- if automatically , return false
 	["variableSet"] = function(value)
+		return false
 	end,
 	["variableTest"] = function(value)
 		table.insert(variable, value)
+		return false
 	end,
 	["loadBackground"] = function(sl , value)
 		local path = nil
@@ -42,9 +46,11 @@ local StoryWidgetParser = {
 		sl:addChild(background)
 		-- background = display.newBackgroundTilesSprite(path)
 		-- StoryLayer:setBackgroundImage(path, nil)
+		return false
 	end,
 	["backGroundMusic"] = function(self, value)
 		audio.preloadMusic(value)
+		return false
 	end,
 	["headPortraitPlay"] = function(self, value)
 		local name,x,y,id = split(value,",", 4)
@@ -54,11 +60,13 @@ local StoryWidgetParser = {
 		spHead:setPosition(ccp(x, y))
 		StoryLayer:addChild(spHead)
 		roles[id] = spHead
+		return false
 	end,
 	["headPortraitMove"] = function(self, value)
 		local id , x, y = split(value, ',', 3)
 		local action = cc.MoveTo(x,y)
 		roles[id]:runAction(action)
+		return false
 	end,
 	["headPortraitDisappear"] = function(value)
 		local id = value
@@ -66,6 +74,7 @@ local StoryWidgetParser = {
 		roles[id]:runAction(action) -- wrong
 		roles[id]:cleanup()-- clean up this node , this clean up must behind the disaper action 
 		roles[id] = nil      
+		return false
 	end,
 	["rolePlay"] = function(self, value)
 		
@@ -121,6 +130,7 @@ local StoryWidgetParser = {
 		self:addChild(role)
 		roles[id] = role
 		role:retain()
+		return false
 	end,
 	["roleMove"] = function(self, value)
 		local moves = split(value, "@")
@@ -156,28 +166,26 @@ local StoryWidgetParser = {
   			delay = 0,
     		onComplete = function()
     			transition.stopTarget(role)
+    			self.canmove = true
     		end,
 			})
-			
+			self.canmove = false
 		end
+		return true
 	end,
 	["dialogue"] = function(self, value)
 		local id, title , line = split_dlg(value)
-		print("id ", id , " titile ", title, " line " , line)
 		local role = roles[id]
 		local head = getHead(heros, role["name"])
-		local str = "[background=dlg_bg.png] [/background][head=%s]口[/head][color=a number=998]%s[/color]"
-		str = string.format(str, head, line)
-		print("str", str)
-    	local ricLab = RichLabel.new({str=str, font="Microsoft Yahei", fontSize=12, rowWidth=230, rowSpace = -2})
-   		ricLab:setPosition(ccp(display.cx-200, display.height-50))
-   	 	self:addChild(ricLab)
-
-    -- 添加事件监听函数
-    	local function listener(button, params)
-        	print("click dialog.", params.text, params.tag, params.number)
-    	end
-    	ricLab:setClilckEventListener(listener)
+		local str = "[background=dlg_bg.png] [/background][head=%s]口[/head][color=a number=998]%s:%s[/color]"
+		str = string.format(str, head, title, line)
+		self.ricLab = RichLabel.new({str=str, font="Microsoft Yahei", fontSize=12, rowWidth=230, rowSpace = -2})
+   		self.ricLab:setPosition(ccp(display.cx/2, display.height-20*hresize))
+   		self.ricLab:retain()
+   		self.ricLab:setScale(wresize)
+   	 	self:addChild(self.ricLab)
+    	self.ricLab:setClilckEventListener(self)
+    	return true
 	end,
 	["storyAction"] = function(self, value)
 		local frame, dir, id = split(value, "," , 3)
@@ -201,28 +209,40 @@ local StoryWidgetParser = {
 		if dir == '1' or dir == '3' then
 			role:setFlipX(true)
 		end
+		return false
 	end,
 	["ChoiceBox"] = function(self, value)
+		return true
 	end,
 	["sonThings"] = function(self, value)
+		return false
 	end,
 	["codeValueTest"] = function(self, value)
+		return false
 	end,
 	["addCareerism"] = function(self, value)
+		return false
 	end,
 	["delayTime"] = function(self, value)
+		return false
 	end,
 	["SceneNameSet"] = function(self, value)
+		return false
 	end,
 	["RShowMenu"] = function(self, value)
+		return false
 	end,
 	["Plot"] = function(self, value)
+		return false
 	end,
 	["Scene"] = function(self, value)
+		return false
 	end,
 	["sceneIntroduce"] = function(self, value)
+		return false
 	end,
 	["section"] = function(self, value)
+		return false
 	end,
 }
 
@@ -230,6 +250,7 @@ function StoryLayer:ctor()
 	self.queue = nil 	
 	self.scpidx = 1
 	self.scpqueue = {}
+	self.canmove = true
 	log(DEBUG,"story layer ctor..")
 	--self:addChild(nil)
 end
@@ -244,24 +265,30 @@ function StoryLayer:setGUI()
 	self:parseTable(self.queue)
 	self:setTouchEnabled(true)
 	self:addNodeEventListener(cc.NODE_TOUCH_EVENT, function(event)
-	
 		if event.name == "began"or event.name == "added" then
+			if self.ricLab ~= nil then
+				self:removeChild(self.ricLab, true)
+				self.ricLab = nil 
+			end
 			ret = self:doAction()
 		end
 		return false
 	end)
-	
 end
 
 function StoryLayer:doAction()
-	--log(DEBUG, "doing action..")
-	if self.scpidx > #self.scpqueue then
+	if self.scpidx > #self.scpqueue or self.canmove == false then
 		log(DEBUG, "done")
 		return false
 	end
+
 	k,v = self.scpqueue[self.scpidx][1],self.scpqueue[self.scpidx][2]
-	self:parseWidget(k, v)
+	ret = self:parseWidget(k, v)
 	self.scpidx = self.scpidx + 1
+	if ret == false then
+		self:doAction()
+	end
+
 	return true
 end
 
@@ -290,8 +317,8 @@ end
 function StoryLayer:parseWidget(key, value)
 	log(DEBUG, "key is " .. key)
 	f = StoryWidgetParser[key]
-	f(self, value)
-
+	ret = f(self, value)
+	return ret 
 end
 
 return StoryLayer

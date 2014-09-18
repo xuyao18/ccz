@@ -39,7 +39,7 @@ function game:createMenuScene(items)
 end
 
 function game:start( ... )
-	God.game_start()
+	God.start()
 	
 end
 
