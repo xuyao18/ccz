@@ -8,10 +8,16 @@ end
 
 function split(s, p, size)
     local rt= {}
+    
     string.gsub(s, '[^'..p..']+', function(w) table.insert(rt, w) end )
+    
     if size == nil then
    		return rt
 	end
+	if size == 2 then
+		return rt[1], rt[2]
+	end
+
 	if size == 3 then
 		return rt[1],rt[2],rt[3]
 	end
@@ -38,7 +44,24 @@ function split_dlg(value)
 	name = trim(name)
 	line = trim(line)
 	return id, name, line
+end
 
+function split_option(value)
+	local id =0 
+	local name = ""
+	local options = {} -- key is variable , value is the string 
+	local tempstring = ""
+	local k = "" 
+	local v = ""
+	id, name , tempstring = split_dlg(value)
+	log(DEBUG,"TEMPSTRING IS ", tempstring)
+	local opts = split(tempstring, ",")
+	for idx, opt in ipairs(opts) do 
+		v, k = split(opt, "@", 2)
+		options[k] = v
+	end
+
+	return id, name , options
 end
 
 function getHead( tab, name, offset)
@@ -74,7 +97,7 @@ function transfer(x, y, wresize, hresize)
 	local b = ((x - y + 42) / 2 * 16 -16) * wresize
 	a = a + hresize * 20
 	b = (b ) + wresize * 48
-	print('x = ', x , 'y = ', y, 'a = ', a, 'b = ', b)
+	log(DEBUG, 'x = ', x , 'y = ', y, 'a = ', a, 'b = ', b)
 
 	return b, a
 end

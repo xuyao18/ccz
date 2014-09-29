@@ -212,9 +212,29 @@ local StoryWidgetParser = {
 		return false
 	end,
 	["ChoiceBox"] = function(self, value)
+		print(value)
+		local id,name,options = split_option(value)
+		local role = roles[id]
+		local head = getHead(heros, role["name"])
+		local str = "[background=dlg_bg.png] [/background][head=%s]口[/head]"
+		str = string.format(str, head)
+		local index = 1
+		for key, option in pairs(options) do
+			local appendstr = "[color=a number=%s row=%s]%s[/color]"
+			appendstr = string.format(appendstr, key, index, option)
+			index = index + 1
+			str = str..appendstr
+		end
+		self.ricLab = RichLabel.new({str=str, font="Microsoft Yahei", fontSize=12, rowWidth=230, rowSpace = -2})
+   		self.ricLab:setPosition(ccp(display.cx/2, display.height-20*hresize))
+   		self.ricLab:retain()
+   		self.ricLab:setScale(wresize)
+   	 	self:addChild(self.ricLab)
+    	self.ricLab:setClilckEventListener(self)
 		return true
 	end,
 	["sonThings"] = function(self, value)
+		print(value)
 		return false
 	end,
 	["codeValueTest"] = function(self, value)
@@ -276,7 +296,8 @@ function StoryLayer:setGUI()
 	end)
 end
 
-function StoryLayer:doAction()
+function StoryLayer:doAction(...)
+	dump(arg)
 	if self.scpidx > #self.scpqueue or self.canmove == false then
 		log(DEBUG, "done")
 		return false

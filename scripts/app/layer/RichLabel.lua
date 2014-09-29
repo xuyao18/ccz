@@ -40,6 +40,7 @@ function RichLabel:ctor(param)
 		local params = {}
 		self:tab_addDataTo(params, v)
 		-- 计算实际渲染宽度
+		print("PRow ", params.row, " ocRow ", ocRow)
 		if params.row == ocRow then
 			ocWidth = ocWidth+useWidth
 		else
@@ -59,6 +60,7 @@ function RichLabel:ctor(param)
 			params.x = params.x + 20
 		end
     	btn,useWidth,useHeight = self:tab_createButton(params)
+    	print("params x ", params.x)
 	end
 	
 end
@@ -122,7 +124,11 @@ function RichLabel:tab_addtext(var)
 			local txtLen = self:accountTextLen(tab.text, tab.size)--string.len(tab.text)
 			if txtLen <= remain then 
 				allTab[current] = allTab[current] .. tab.text
-				self:addDataToRenderTab(copyVar, tab, tab.text, (useLen+1), current)
+				if tab.row ~= nil then
+					self:addDataToRenderTab(copyVar, tab, tab.text, (useLen+1), tab.row)
+				else
+					self:addDataToRenderTab(copyVar, tab, tab.text, (useLen+1), current)
+				end
 				useLen = useLen + txtLen
 				txtTab = {}
 			else 
@@ -138,7 +144,11 @@ function RichLabel:tab_addtext(var)
 					else
 						if string.len(mstr) > 0 then
 							allTab[current] = allTab[current] .. mstr
-							self:addDataToRenderTab(copyVar, tab, mstr, (sIndex), current)
+							if tab.row ~= nil then
+								self:addDataToRenderTab(copyVar, tab, mstr, (sIndex), tab.row)
+							else
+								self:addDataToRenderTab(copyVar, tab, mstr, (sIndex), current)
+							end
 						end
 						current = current+1
 						useLen = 0          
@@ -218,7 +228,7 @@ function RichLabel:tab_createButton(params)
         end)
         :onButtonClicked(function(event)
             event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
-            if self.listener then self.listener:doAction() end
+            if self.listener then self.listener:doAction(params.number) end
         end)
         :onButtonRelease(function(event)
         	event.target:getButtonLabel("normal"):setPosition(LABELOFFSET)
